@@ -81,6 +81,8 @@ namespace Confuser.Core {
 			context.PackerInitiated = parameters.PackerInitiated;
 			context.token = token;
 
+            context.Logger.Debug("\r\n\r\nhttp://hackhound.org/\r\n\r\n");
+
 			PrintInfo(context);
 
 			bool ok = false;

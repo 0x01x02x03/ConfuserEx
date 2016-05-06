@@ -6,12 +6,15 @@ namespace Confuser.Runtime {
 		static byte[] b;
 
 		static void Initialize() {
+
+            uint EncryptionKey_Key = 0x08; //Change this
+
 			var l = (uint)Mutation.KeyI0;
 			uint[] q = Mutation.Placeholder(new uint[Mutation.KeyI0]);
 
-			var k = new uint[0x10];
+			var k = new uint[EncryptionKey_Key];
 			var n = (uint)Mutation.KeyI1;
-			for (int i = 0; i < 0x10; i++) {
+			for (int i = 0; i < EncryptionKey_Key; i++) {
 				n ^= n >> 12;
 				n ^= n << 25;
 				n ^= n >> 27;
@@ -19,13 +22,13 @@ namespace Confuser.Runtime {
 			}
 
 			int s = 0, d = 0;
-			var w = new uint[0x10];
+			var w = new uint[EncryptionKey_Key];
 			var o = new byte[l * 4];
 			while (s < l) {
-				for (int j = 0; j < 0x10; j++)
+				for (int j = 0; j < EncryptionKey_Key; j++)
 					w[j] = q[s + j];
 				Mutation.Crypt(w, k);
-				for (int j = 0; j < 0x10; j++) {
+				for (int j = 0; j < EncryptionKey_Key; j++) {
 					uint e = w[j];
 					o[d++] = (byte)e;
 					o[d++] = (byte)(e >> 8);
@@ -33,7 +36,7 @@ namespace Confuser.Runtime {
 					o[d++] = (byte)(e >> 24);
 					k[j] ^= e;
 				}
-				s += 0x10;
+				s += (int)EncryptionKey_Key;
 			}
 
 			b = Lzma.Decompress(o);

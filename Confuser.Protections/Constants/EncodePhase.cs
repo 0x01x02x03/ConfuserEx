@@ -88,11 +88,13 @@ namespace Confuser.Protections.Constants {
 			Buffer.BlockCopy(encodedBuff, 0, compressedBuff, 0, encodedBuff.Length);
 			Debug.Assert(compressedLen % 0x10 == 0);
 
-			// encrypt
+            // encrypt
+            //
+            uint dynamic_cp = EncryptionKey.Key; // 0x10
 			uint keySeed = moduleCtx.Random.NextUInt32();
-			var key = new uint[0x10];
+			var key = new uint[dynamic_cp];
 			uint state = keySeed;
-			for (int i = 0; i < 0x10; i++) {
+			for (int i = 0; i < dynamic_cp; i++) {
 				state ^= state >> 12;
 				state ^= state << 25;
 				state ^= state >> 27;
@@ -103,10 +105,10 @@ namespace Confuser.Protections.Constants {
 			buffIndex = 0;
 			while (buffIndex < compressedBuff.Length) {
 				uint[] enc = moduleCtx.ModeHandler.Encrypt(compressedBuff, buffIndex, key);
-				for (int j = 0; j < 0x10; j++)
+				for (int j = 0; j < dynamic_cp; j++)
 					key[j] ^= compressedBuff[buffIndex + j];
-				Buffer.BlockCopy(enc, 0, encryptedBuffer, buffIndex * 4, 0x40);
-				buffIndex += 0x10;
+				Buffer.BlockCopy(enc, 0, encryptedBuffer, buffIndex * 4, (int)dynamic_cp * 4);
+				buffIndex += (int)dynamic_cp;
 			}
 			Debug.Assert(buffIndex == compressedBuff.Length);
 
